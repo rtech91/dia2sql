@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys, getopt
 
 def show_help():
