@@ -9,9 +9,9 @@ def show_help():
 
     print ("""
         \rUsage: dia2sql [OPTIONS]\n\n
-        \r-h --help\t\t show this help
-        \r-f --from-dia\t\t path to Dia file with RDBMS model
-        \r-t --to-sql\t\t path to SQL file to be saved
+        \r-h [--help]\t\t show this help
+        \r-f [--from-dia]\t\t path to Dia file with RDBMS model
+        \r-t [--to-sql]\t\t path to SQL file to be saved
     """)
 
 def main(argv):
