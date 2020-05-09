@@ -2,10 +2,10 @@
 
 from sys import exit, argv
 from getopt import getopt, GetoptError
-from dia2sql.parser import DiaParser
+from diaparser.parser import DiaParser
 
 def show_help():
-    """Show help in the terminal"""
+    """Show app usage help information"""
 
     print ("""
         \rUsage: dia2sql [OPTIONS]\n\n
@@ -22,6 +22,9 @@ def main(argv):
         show_help()
         exit(2)
 
+    dia_model_path: str = ''
+    output_sql: str = ''
+
     for opt, arg in opts:
         if opt == '-h' or opt == '--help':
             show_help()
@@ -29,9 +32,14 @@ def main(argv):
         elif opt in ("-f", "--dia-model"):
             dia_model_path = arg
         elif opt in ("-t", "--to-sql"):
-            outputfile = arg
-        
-        dia = DiaParser(dia_model_path)
+            output_sql = arg
+    
+    # if some arguments are empty, forcely show help information
+    if dia_model_path == '' or output_sql == '':
+        show_help()
+        exit()
+
+    dia = DiaParser(dia_model_path)
 
 if __name__ == "__main__":
    main(argv[1:])
