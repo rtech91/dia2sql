@@ -24,6 +24,7 @@ class DiaParser:
         if exists(path_to_dia) and isfile(path_to_dia) and access(path_to_dia, R_OK):
             diafile = open(path_to_dia, 'rt')
             dia_xml_contents = diafile.read()
+            del diafile
         else:
             print("File \"{0}\" does not exist or not readable!\n".format(path_to_dia))
             exit(2)

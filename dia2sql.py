@@ -34,6 +34,8 @@ def main(argv):
         elif opt in ("-t", "--to-sql"):
             output_sql = arg
     
+    del opts, args
+    
     # if some arguments are empty, forcely show help information
     if dia_model_path == '' or output_sql == '':
         show_help()
