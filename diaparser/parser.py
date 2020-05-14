@@ -16,7 +16,7 @@ class DiaParser:
     __parsed_xml: bytes = ''
 
     def __init__(self, path_to_dia: str):
-        """Check Dia file existance and readability
+        """Check Dia file existance and readability.
 
         Args:
             path_to_dia (str): path to *.dia file
@@ -34,12 +34,12 @@ class DiaParser:
             dia_xml_contents = self.__clear_dia_namespace(dia_xml_contents)
             self.__parsed_xml = etree.fromstring(dia_xml_contents)
         else:
-            print("Given Dia file is not a database model, parsing will be aborted.")
+            print("Specified Dia file is not a database model, parsing will be aborted.")
         
         self.__collect_tables()
 
     def __is_database(self, dia_contents: bytes) -> bool:
-        """Check does parsed Dia document is a Database"""
+        """Check is the parsed Dia document is a Database"""
         return (str(dia_contents).count('Database') > 0)
     
     def __clear_dia_namespace(self, dia_contents: bytes) -> bytes:
@@ -47,7 +47,7 @@ class DiaParser:
         return sub('(\sxmlns:dia="(.*)")|(dia:)', "", dia_contents.decode('utf8')).encode('utf8')
 
     def __collect_tables(self):
-        """Find table objects in the given Dia model, and create entities for them."""
+        """Find table columns and properties in the given Dia model, and create entities for them."""
         layer = self.__parsed_xml.find('layer')
         for table_object in layer.findall('object[@type="Database - Table"]'):
             parsed_table_data = {}
