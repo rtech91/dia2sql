@@ -8,10 +8,12 @@ def show_help():
     """Show app usage help information"""
 
     print ("""
-        \rUsage: dia2sql [OPTIONS]\n\n
-        \r-h [--help]\t\t show this help
-        \r-f [--from-dia]\t\t path to Dia file with RDBMS model
-        \r-t [--to-sql]\t\t path to SQL file to be saved
+        \rOVERVIEW: Convert Dia RDBMS model to the specified SQL engine schema.\n
+        \rUSAGE: dia2sql --from-dia <*.dia file> --to-sql <*.sql file>\n\n
+        \rOPTIONS:
+        \r  -h, --help\t\t Show help information.
+        \r  -f, --from-dia\t Path to Dia file with RDBMS model.
+        \r  -t, --to-sql\t\t Path to SQL file to be saved.
     """)
 
 def main(argv):
