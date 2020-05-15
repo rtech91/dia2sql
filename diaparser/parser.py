@@ -10,7 +10,7 @@ class DiaParser:
 
     Attributes:
     
-    __parsed_xml (Document) Document storage for parsed Dia XML contents.
+    __parsed_xml (bytes) Storage for parsed Dia XML contents.
     """
 
     __parsed_xml: bytes = ''
