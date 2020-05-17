@@ -63,7 +63,7 @@ class DiaParser:
             parsed_table_data['name'] = table_object.find('attribute[@name="name"]/string').text.replace('#', '')
             parsed_table_data['comment'] = table_object.find('attribute[@name="comment"]/string').text.replace('#', '')
             table_columns = table_object.findall('attribute[@name="attributes"]/composite[@type="table_attribute"]')
-            parsed_table_data['columns']: list = []
+            parsed_table_data['columns'] = deque()
             for column_object in table_columns:
                 col_name = column_object.find('attribute[@name="name"]/string').text.replace('#', '')
                 col_type = column_object.find('attribute[@name="type"]/string').text.replace('#', '')
