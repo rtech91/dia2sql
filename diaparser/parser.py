@@ -4,6 +4,7 @@ from sys import exit
 from lxml import etree
 from gzip import open
 from re import sub
+from app.settings import AppSettings
 
 class DiaParser:
     """Class for parsing the Dia RDBMS model.
