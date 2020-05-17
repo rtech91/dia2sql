@@ -1,8 +1,8 @@
+import gzip
 from os import access, R_OK
 from os.path import isfile, exists
 from sys import exit
 from lxml import etree
-from gzip import open
 from re import sub
 from app.settings import AppSettings
 from sqlgen.table import TableFactory, TableInterface
@@ -18,6 +18,9 @@ class DiaParser:
 
     __parsed_xml: bytes = ''
 
+    # use deque() as much faster FIFO collection provider
+    __tables: [TableInterface] = deque() 
+
     def __init__(self, path_to_dia: str):
         """Check Dia file existance and readability.
 
@@ -26,7 +29,7 @@ class DiaParser:
 
         """
         if exists(path_to_dia) and isfile(path_to_dia) and access(path_to_dia, R_OK):
-            diafile = open(path_to_dia, 'r')
+            diafile = gzip.open(path_to_dia, 'r')
             dia_xml_contents = diafile.read()
             del diafile
         else:
@@ -42,8 +45,23 @@ class DiaParser:
         self.__collect_tables()
     
     def saveSQL(self, path_to_sql: str):
-        #TODO: implement saving the common SQL schema
-        pass
+        if len(self.__tables) > 0:
+            droptable_list: str = ''
+            sql_schema: str = ''
+
+            #TODO: make droplist optional
+            for i in range(len(self.__tables)):
+                if(self.__tables[i] is not None):
+                    droptable_list += "DROP TABLE `{table_name}`;\n".format(table_name=self.__tables[i].name);
+
+            sql_schema += droptable_list + "\n\n"; 
+            while self.__tables:
+                table: TableInterface = self.__tables.popleft()
+                if table is not None:
+                    sql_schema += table.getSQL()
+            sql_file = open(path_to_sql, 'w')
+            sql_file.write(sql_schema)
+            sql_file.close()
 
     def __is_database(self, dia_contents: bytes) -> bool:
         """Check is the parsed Dia document is a Database"""
@@ -56,7 +74,6 @@ class DiaParser:
     def __collect_tables(self):
         """Find table columns and properties in the given Dia model, and create entities for them."""
         layer = self.__parsed_xml.find('layer')
-        tables: [TableInterface] = deque() # use deque() as much faster FIFO collection provider
         for table_object in layer.findall('object[@type="Database - Table"]'):
             table_factory = TableFactory()
             parsed_table_data = {}
@@ -65,20 +82,14 @@ class DiaParser:
             table_columns = table_object.findall('attribute[@name="attributes"]/composite[@type="table_attribute"]')
             parsed_table_data['columns'] = deque()
             for column_object in table_columns:
-                col_name = column_object.find('attribute[@name="name"]/string').text.replace('#', '')
-                col_type = column_object.find('attribute[@name="type"]/string').text.replace('#', '')
-                col_comment = column_object.find('attribute[@name="comment"]/string').text.replace('#', '')
-                col_is_primary = column_object.find('attribute[@name="primary_key"]/boolean').get('val').replace('#', '')
-                col_is_null = column_object.find('attribute[@name="nullable"]/boolean').get('val').replace('#', '')
-                col_is_unique = column_object.find('attribute[@name="unique"]/boolean').get('val').replace('#', '')
-                col_default_value = column_object.find('attribute[@name="default_value"]/string').text.replace('#', '')
                 parsed_table_data['columns'].append({
-                    'name': col_name,
-                    'type': col_type,
-                    'comment': col_comment,
-                    'is_primary': col_is_primary,
-                    'is_null': col_is_null,
-                    'is_unique': col_is_unique,
-                    'default_value': col_default_value
+                    'name': column_object.find('attribute[@name="name"]/string').text.replace('#', ''),
+                    'type': column_object.find('attribute[@name="type"]/string').text.replace('#', ''),
+                    'comment': column_object.find('attribute[@name="comment"]/string').text.replace('#', ''),
+                    'is_primary': column_object.find('attribute[@name="primary_key"]/boolean').get('val').replace('#', ''),
+                    'is_null': column_object.find('attribute[@name="nullable"]/boolean').get('val').replace('#', ''),
+                    'is_unique': column_object.find('attribute[@name="unique"]/boolean').get('val').replace('#', ''),
+                    #TODO: add support of default type
+                    #'default_value': column_object.find('attribute[@name="default_value"]/string').text.replace('#', '')
                 })
-            tables.append( table_factory.get_table(parsed_table_data) )
+            self.__tables.append( table_factory.get_table(parsed_table_data) )
