@@ -52,7 +52,8 @@ class DiaParser:
         layer = self.__parsed_xml.find('layer')
         for table_object in layer.findall('object[@type="Database - Table"]'):
             parsed_table_data = {}
-            parsed_table_data['name'] = table_object.find('attribute[@name="name"]/string').text
+            parsed_table_data['name'] = table_object.find('attribute[@name="name"]/string').text.replace('#', '')
+            parsed_table_data['comment'] = table_object.find('attribute[@name="comment"]/string').text.replace('#', '')
             table_columns = table_object.findall('attribute[@name="attributes"]/composite[@type="table_attribute"]')
             parsed_table_data['columns']: list = []
             for column_object in table_columns:
