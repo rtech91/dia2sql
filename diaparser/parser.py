@@ -5,6 +5,8 @@ from lxml import etree
 from gzip import open
 from re import sub
 from app.settings import AppSettings
+from sqlgen.table import TableFactory, TableInterface
+from collections import deque
 
 class DiaParser:
     """Class for parsing the Dia RDBMS model.
@@ -38,6 +40,10 @@ class DiaParser:
             print("Specified Dia file is not a database model, parsing will be aborted.")
         
         self.__collect_tables()
+    
+    def saveSQL(self, path_to_sql: str):
+        #TODO: implement saving the common SQL schema
+        pass
 
     def __is_database(self, dia_contents: bytes) -> bool:
         """Check is the parsed Dia document is a Database"""
@@ -50,7 +56,9 @@ class DiaParser:
     def __collect_tables(self):
         """Find table columns and properties in the given Dia model, and create entities for them."""
         layer = self.__parsed_xml.find('layer')
+        tables: [TableInterface] = deque() # use deque() as much faster FIFO collection provider
         for table_object in layer.findall('object[@type="Database - Table"]'):
+            table_factory = TableFactory()
             parsed_table_data = {}
             parsed_table_data['name'] = table_object.find('attribute[@name="name"]/string').text.replace('#', '')
             parsed_table_data['comment'] = table_object.find('attribute[@name="comment"]/string').text.replace('#', '')
@@ -73,4 +81,4 @@ class DiaParser:
                     'is_unique': col_is_unique,
                     'default_value': col_default_value
                 })
-            #TODO implement creating the table
+            tables.append( table_factory.get_table(parsed_table_data) )
