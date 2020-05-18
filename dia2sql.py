@@ -32,7 +32,7 @@ def main(argv):
         if opt in ('-h', '--help'):
             show_help()
             exit()
-        elif opt in ("-f", "--dia-model"):
+        elif opt in ("-f", "--from-dia"):
             settings.dia_path = arg
         elif opt in ("-t", "--to-sql"):
             settings.sql_path = arg
