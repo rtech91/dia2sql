@@ -12,7 +12,7 @@ install:
 	@find sqlgen/ -name "*.py" -exec cp {} $(DESTDIR)/sqlgen \;
 	@find diaparser/ -name "*.py" -exec cp {} $(DESTDIR)/diaparser \;
 	@cp dia2sql.py -p $(DESTDIR)
-	@ln -s $(DESTDIR)/dia2sql.py /usr/bin/dia2sql
+	@ln -sfn $(DESTDIR)/dia2sql.py /usr/bin/dia2sql
 
 remove:
 	rm -r $(DESTDIR)
