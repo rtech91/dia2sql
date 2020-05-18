@@ -23,8 +23,9 @@ def main(argv):
     try:
         # try to parse arguments from command line
         opts, args = getopt(argv, 'hf:t:d:', ['help', 'from-dia=', 'to-sql=', 'db-system='])
-    except getopt.GetoptError as err:
-        show_help()
+    except GetoptError as err:
+        print(err)
+        print("\nUse dia2sql --help to view usage help.")
         exit(2)
 
     settings: AppSettings = AppSettings()
