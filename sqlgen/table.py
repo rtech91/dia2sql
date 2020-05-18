@@ -11,8 +11,8 @@ class TableInterface:
         pass
 
 class TableFactory:
-
     """Create table according to the SQL type given in the App settings."""
+    
     def get_table(self, table_data: set):
         #TODO: add support for acceptable database systems only.
         settings = AppSettings()
