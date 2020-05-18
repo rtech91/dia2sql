@@ -39,10 +39,9 @@ class DiaParser:
         if(self.__is_database(dia_xml_contents)):
             dia_xml_contents = self.__clear_dia_namespace(dia_xml_contents)
             self.__parsed_xml = etree.fromstring(dia_xml_contents)
+            self.__collect_tables()
         else:
             print("Specified Dia file is not a database model, parsing will be aborted.")
-        
-        self.__collect_tables()
     
     def saveSQL(self, path_to_sql: str):
         if len(self.__tables) > 0:
