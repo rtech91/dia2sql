@@ -51,7 +51,7 @@ class DiaParser:
             #TODO: make droplist optional
             for i in range(len(self.__tables)):
                 if(self.__tables[i] is not None):
-                    droptable_list += "DROP TABLE `{table_name}`;\n".format(table_name=self.__tables[i].name);
+                    droptable_list += "DROP TABLE IF EXISTS `{table_name}`;\n".format(table_name=self.__tables[i].name);
 
             sql_schema += droptable_list + "\n\n"; 
             while self.__tables:
